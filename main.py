@@ -37,12 +37,24 @@ day_of_week_translator = {
 
 model_options = ['Regressao linear', 'Random Forest']
 busline_filter = st.sidebar.selectbox('Selecionar Linha:', list(data['linha'].unique()))
-model_data = data[data.linha.isin([busline_filter])]
+model_data = data[data.linha.isin([busline_filter])].reset_index()
 
 X = model_data.drop(['data_hora','hora', 'mes', 'validations_per_hour'], axis='columns')
 one_hot_encoder = OneHotEncoder(sparse=False)
 X[['domingo','segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']] = one_hot_encoder.fit_transform(X['dia_da_semana'].values.reshape(-1,1))
 y = model_data.validations_per_hour
+
+LinearRegressionModel = LinearRegression()
+RandomForestModel = RandomForestRegressor(n_jobs=6)
+
+def get_chart_data(busline_filter):
+    chart_data = model_data
+    if busline_filter == 'Todos':
+        chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
+        return chart_data
+    chart_data = chart_data[chart_data.linha.isin([busline_filter])]
+    chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
+    return chart_data
 
 def getModel(model_filter):
     if model_filter == 'Regressao Linear':
@@ -69,15 +81,15 @@ def get_performance(model, X_test, Y_test):
     performance_scoring['Score'] = performance_scoring['Score'].astype('float64')
     return performance_scoring
 
-def single_busline_model(model_type):
-    model = getModel(model_type)
+def single_busline_model(model):
+    single_busline_model = model
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = 0.1, random_state=5)
-    model.fit(X_train, Y_train)
+    single_busline_model.fit(X_train, Y_train)
     performance_scoring = get_performance(model, X_test, Y_test)
-    return model, performance_scoring
+    return single_busline_model, performance_scoring
 
-def train_28th_predict_29th(model_type):
-    day29_model = getModel(model_type)
+def train_28th_predict_29th(model):
+    day29_model = model
 
     chosen_line_data = data[data.linha.isin([busline_filter])]
 
@@ -114,17 +126,8 @@ def train_28th_predict_29th(model_type):
 
     return day29_model, performance_scoring
 
-def get_chart_data(busline_filter):
-    chart_data = data
-    if busline_filter == 'Todos':
-        chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
-        return chart_data
-    chart_data = chart_data[chart_data.linha.isin([busline_filter])]
-    chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
-    return chart_data
-
-def train_3week(model_type):
-    week3_model = getModel(model_type)
+def train_3week(model):
+    week3_model = model
 
     chosen_line_data = data[data.linha.isin([busline_filter])]
 
@@ -194,6 +197,7 @@ features_col.write(X)
 target_col.write("Target")
 target_col.write(y)
 
+st.write("### Relacao Feature x Target")
 
 st.write("###  1 Modelo Por Linha (mes completo de treino)")
 model_per_line_col1, model_per_line_col2 = st.beta_columns(2)
@@ -201,8 +205,8 @@ model_per_line_col1.write('<span class="text-warning bg-dark p-2"> Regressao Lin
 model_per_line_col2.write('<span class="text-warning bg-dark p-2">Random Forest</span>', unsafe_allow_html=True)
 
 
-model_per_line_lr, model_per_line_lr_performance = single_busline_model('Regressao Linear')
-model_per_line_rf, model_per_line_rf_performance = single_busline_model('Random Forest')
+model_per_line_lr, model_per_line_lr_performance = single_busline_model(LinearRegressionModel)
+model_per_line_rf, model_per_line_rf_performance = single_busline_model(RandomForestModel)
 
 model_per_line_col1.write(model_per_line_lr_performance)
 model_per_line_col2.write(model_per_line_rf_performance)
@@ -211,11 +215,11 @@ st.write("Utilizando sample aleatorio de dado para teste de previsao: ")
 
 predict_test = X.sample(n=1)
 predict_res = model_per_line_lr.predict(predict_test)
-st.write(data[predict_test.index[0]:predict_test.index[0]+1])
+st.write(model_data[predict_test.index[0]:predict_test.index[0]+1])
 st.write("Regressao Linear -> resultado do predict de test: ", predict_res)
 
-predict_res = model_per_line_rf.predict(predict_test)
-st.write("Random Forest -> resultado do predict de test: ", predict_res)
+predict_res2 = model_per_line_rf.predict(predict_test)
+st.write("Random Forest -> resultado do predict de test: ", predict_res2)
 
 
 st.write("###  Treina 28 dias -> predict dia 29")
@@ -224,10 +228,10 @@ day28_lr_col.write('<span class="text-warning bg-dark p-2"> Regressao Linear </s
 day28_rf_col.write('<span class="text-warning bg-dark p-2">Random Forest</span>', unsafe_allow_html=True)
 
 with day28_lr_col:
-    day28_lr_model, day28_lr_performance = train_28th_predict_29th('Regressao Linear')
+    day28_lr_model, day28_lr_performance = train_28th_predict_29th(LinearRegressionModel)
     st.write("Performance: ", day28_lr_performance)
 with day28_rf_col:
-    day28_rf_model, day28_rf_performance =  train_28th_predict_29th('Random Forest')
+    day28_rf_model, day28_rf_performance =  train_28th_predict_29th(RandomForestModel)
     st.write("Performance: ", day28_rf_performance)
 
 st.write("###  Treina 3 semanas -> predict semana 4")
@@ -236,10 +240,10 @@ week3_lr_col.write('<span class="text-warning bg-dark p-2"> Regressao Linear </s
 week3_rf_col.write('<span class="text-warning bg-dark p-2">Random Forest</span>', unsafe_allow_html=True)
 
 with week3_lr_col:
-    week3_lr_model, week3_lr_performance = train_3week('Regressao Linear')
+    week3_lr_model, week3_lr_performance = train_3week(LinearRegressionModel)
     st.write("Performance: ", week3_lr_performance)
 with week3_rf_col:
-    week3_rf_model, week3_rf_performance = train_3week('Random Forest')
+    week3_rf_model, week3_rf_performance = train_3week(RandomForestModel)
     st.write("Performance: ", week3_rf_performance)
 
 #Processing the machine learning algorithm
