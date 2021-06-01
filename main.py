@@ -10,50 +10,28 @@ import streamlit as st
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.metrics import mean_absolute_percentage_error
 
+
 st.markdown(
-        """
+    """
     <style>
         .reportview-container .main .block-container{
             max-width: 1370px;
         }
     </style>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
     """,
-            unsafe_allow_html=True,
-    )
-
-# Reading Data file (geolocalized)
-data = pd.read_csv('final_df.csv', sep=';')
-data = data.drop_duplicates()
-
-day_of_week_translator = {
-    0: "Domingo",
-    1: "Segunda",
-    2: "Terca",
-    3: "Quarta",
-    4: "Quinta",
-    5: "Sexta",
-    6: "Sabado",
-}
-
-model_options = ['Regressao linear', 'Random Forest']
-busline_filter = st.sidebar.selectbox('Selecionar Linha:', list(data['linha'].unique()))
-model_data = data[data.linha.isin([busline_filter])].reset_index()
-
-X = model_data.drop(['data_hora','hora', 'mes', 'validations_per_hour'], axis='columns')
-one_hot_encoder = OneHotEncoder(sparse=False)
-X[['domingo','segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']] = one_hot_encoder.fit_transform(X['dia_da_semana'].values.reshape(-1,1))
-y = model_data.validations_per_hour
-
-LinearRegressionModel = LinearRegression()
-RandomForestModel = RandomForestRegressor(n_jobs=6)
+    unsafe_allow_html=True,
+)
 
 def get_chart_data(busline_filter):
     chart_data = model_data
     if busline_filter == 'Todos':
-        chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
+        chart_data = chart_data.drop(['mes', 'data_hora','d_mes','hour_cos', 'hour_sin', 'd_semana', 'd_ano', 'linha'], axis='columns').set_index('hora')
         return chart_data
     chart_data = chart_data[chart_data.linha.isin([busline_filter])]
-    chart_data = chart_data.drop(['mes', 'data_hora','dia_do_mes','hour_cos', 'hour_sin', 'dia_da_semana', 'linha'], axis='columns').set_index('hora')
+    chart_data = chart_data.drop(['mes', 'data_hora','d_mes','hour_cos', 'hour_sin', 'd_semana', 'linha'], axis='columns').set_index('hora')
     return chart_data
 
 def getModel(model_filter):
@@ -94,16 +72,16 @@ def train_28th_predict_29th(model):
     chosen_line_data = data[data.linha.isin([busline_filter])]
 
     day29_model_data = data[data.linha.isin([busline_filter])]
-    day29_model_data = day29_model_data[(day29_model_data.dia_do_mes < 30) & (day29_model_data.mes == 11)]
+    day29_model_data = day29_model_data[(day29_model_data.d_mes < 30) & (day29_model_data.mes == 11)]
 
-    X = day29_model_data.drop(['data_hora','hora','dia_do_mes','mes', 'validations_per_hour'], axis='columns')
+    X = day29_model_data.drop(['data_hora','hora','d_mes', 'd_ano','mes', 'validations_per_hour'], axis='columns')
     y = day29_model_data.validations_per_hour
     
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = 0.2, random_state=5)
     day29_model.fit(X_train, Y_train)
     performance_scoring = get_performance(day29_model, X_test, Y_test)
 
-    c_line_data = chosen_line_data[(chosen_line_data.dia_do_mes >= 30) & (chosen_line_data.mes == 11)]
+    c_line_data = chosen_line_data[(chosen_line_data.d_mes >= 30) & (chosen_line_data.mes == 11)]
 
     prev = np.zeros(len(c_line_data.hora.unique()))
     for index, hora  in enumerate(c_line_data.hora.unique()):
@@ -132,35 +110,35 @@ def train_3week(model):
     chosen_line_data = data[data.linha.isin([busline_filter])]
 
     week3_model_data = data[data.linha.isin([busline_filter])]
-    week3_model_data = week3_model_data[(week3_model_data.dia_do_mes < 24) & (week3_model_data.mes == 11)]
+    week3_model_data = week3_model_data[(week3_model_data.d_mes < 24) & (week3_model_data.mes == 11)]
 
-    X = week3_model_data.drop(['data_hora','hora','dia_do_mes','mes', 'validations_per_hour'], axis='columns')
+    X = week3_model_data.drop(['data_hora','hora', 'd_ano','d_mes','mes', 'validations_per_hour'], axis='columns')
     y = week3_model_data.validations_per_hour
     
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = 0.2, random_state=5)
     week3_model.fit(X_train, Y_train)
 
-    c_line_data = chosen_line_data[(chosen_line_data.dia_do_mes >= 24) & (chosen_line_data.mes == 11)]
+    c_line_data = chosen_line_data[(chosen_line_data.d_mes >= 24) & (chosen_line_data.mes == 11)]
 
-    shape = (len(c_line_data.dia_da_semana.unique()), len(c_line_data.hora.unique()))
+    shape = (len(c_line_data.d_semana.unique()), len(c_line_data.hora.unique()))
 
     prev = np.zeros(shape)
-    for idx, dia in enumerate(c_line_data.dia_da_semana.unique()):
+    for idx, dia in enumerate(c_line_data.d_semana.unique()):
         for index, hora  in enumerate(c_line_data.hora.unique()):
             h_sin= np.sin(2 * np.pi * hora/23.0)
             h_cos = np.cos(2 * np.pi * hora/23.0)
             prev[idx, index] = week3_model.predict([[busline_filter, idx, h_sin, h_cos]])
     
-    for idx, dia in enumerate(c_line_data.dia_da_semana.unique()):
-        actual = c_line_data[(chosen_line_data.dia_da_semana == idx)].validations_per_hour
+    for idx, dia in enumerate(c_line_data.d_semana.unique()):
+        actual = c_line_data[(chosen_line_data.d_semana == idx)].validations_per_hour
         if len(actual) != len(prev[idx]):
             continue
 
         st.write('Dia da semana: <span class="text-light bg-dark p-2">', day_of_week_translator[idx], "</span>", unsafe_allow_html=True)
         fig = plt.figure(figsize=(12, 5))
-        plt.xticks(c_line_data[(chosen_line_data.dia_da_semana == idx)].hora.unique())
-        plt.plot(c_line_data[(chosen_line_data.dia_da_semana == idx)].hora.unique(), prev[idx], label="predicted")
-        plt.plot(c_line_data[(chosen_line_data.dia_da_semana == idx)].hora.unique(), c_line_data[(chosen_line_data.dia_da_semana == idx)].validations_per_hour, label="actual")
+        plt.xticks(c_line_data[(chosen_line_data.d_semana == idx)].hora.unique())
+        plt.plot(c_line_data[(chosen_line_data.d_semana == idx)].hora.unique(), prev[idx], label="predicted")
+        plt.plot(c_line_data[(chosen_line_data.d_semana == idx)].hora.unique(), c_line_data[(chosen_line_data.d_semana == idx)].validations_per_hour, label="actual")
         plt.legend(loc="upper right")
         st.pyplot(plt)
         st.write(pd.DataFrame({'predicted': prev[idx], 'actual': actual}))
@@ -168,6 +146,32 @@ def train_3week(model):
     performance_scoring = get_performance(week3_model, X_test, Y_test)
 
     return week3_model, performance_scoring
+
+# Reading Data file (geolocalized)
+data = pd.read_csv('df_input.csv', sep=';')
+data = data.drop_duplicates()
+
+day_of_week_translator = {
+    0: "Domingo",
+    1: "Segunda",
+    2: "Terca",
+    3: "Quarta",
+    4: "Quinta",
+    5: "Sexta",
+    6: "Sabado",
+}
+
+model_options = ['Regressao linear', 'Random Forest']
+busline_filter = st.sidebar.selectbox('Selecionar Linha:', list(data['linha'].unique()))
+model_data = data[data.linha.isin([busline_filter])].reset_index()
+
+X = model_data.drop(['data_hora','hora', 'mes', 'd_ano', 'validations_per_hour'], axis='columns')
+one_hot_encoder = OneHotEncoder(sparse=False)
+X[['domingo','segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']] = one_hot_encoder.fit_transform(X['d_semana'].values.reshape(-1,1))
+y = model_data.validations_per_hour
+
+LinearRegressionModel = LinearRegression()
+RandomForestModel = RandomForestRegressor(n_jobs=6)
 
 # Main text setup
 st.title('Analise Mobilidade Urbana - Fortaleza')
@@ -221,6 +225,7 @@ st.write("Regressao Linear -> resultado do predict de test: ", predict_res)
 predict_res2 = model_per_line_rf.predict(predict_test)
 st.write("Random Forest -> resultado do predict de test: ", predict_res2)
 
+st.markdown("""---""")
 
 st.write("###  Treina 28 dias -> predict dia 29")
 day28_lr_col, day28_rf_col = st.beta_columns(2)
@@ -245,16 +250,4 @@ with week3_lr_col:
 with week3_rf_col:
     week3_rf_model, week3_rf_performance = train_3week(RandomForestModel)
     st.write("Performance: ", week3_rf_performance)
-
-#Processing the machine learning algorithm
-
-
-### Styles needed for Dashboard yay
-st.markdown(
-    """
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-
-""",
-    unsafe_allow_html=True,
-)
 

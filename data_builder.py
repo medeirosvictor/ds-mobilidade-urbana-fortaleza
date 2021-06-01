@@ -14,7 +14,7 @@ final_df = pd.DataFrame()
 
 def generate_df(filename):
     print(filename)
-    validation_georeffed_do_dia = pd.read_csv('./validation_proc/' + filename, sep=';')
+    validation_georeffed_do_dia = pd.read_csv('../validation_proc/' + filename, sep=';')
     
     #print('Before Zero Drop:', len(validation_georeffed_do_dia))
     #validation_georeffed_do_dia = validation_georeffed_do_dia[validation_georeffed_do_dia.lat != 0.000000]
@@ -28,12 +28,13 @@ def generate_df(filename):
     validation_georeffed_do_dia = pd.DataFrame(
         {'validations_per_hour': validation_georeffed_do_dia.groupby(['linha', 'data_hora']).size()}).reset_index()
 
-    validation_georeffed_do_dia['dia_da_semana'] = validation_georeffed_do_dia.apply(lambda row: row.data_hora.dayofweek, axis=1)
+    validation_georeffed_do_dia['d_semana'] = validation_georeffed_do_dia.apply(lambda row: row.data_hora.dayofweek, axis=1)
 
     validation_georeffed_do_dia['hour_sin'] = np.sin(2 * np.pi * validation_georeffed_do_dia['data_hora'].dt.hour/23.0)
     validation_georeffed_do_dia['hour_cos'] = np.cos(2 * np.pi * validation_georeffed_do_dia['data_hora'].dt.hour/23.0)
     validation_georeffed_do_dia["hora"] = validation_georeffed_do_dia['data_hora'].dt.strftime('%H')
-    validation_georeffed_do_dia["dia_do_mes"] = validation_georeffed_do_dia['data_hora'].dt.day
+    validation_georeffed_do_dia["d_mes"] = validation_georeffed_do_dia['data_hora'].dt.day
+    validation_georeffed_do_dia["d_ano"] = validation_georeffed_do_dia['data_hora'].dt.dayofyear
     validation_georeffed_do_dia["mes"] = validation_georeffed_do_dia['data_hora'].dt.month
 
     print(len(validation_georeffed_do_dia))
@@ -43,7 +44,7 @@ def generate_df(filename):
 
 if __name__ == '__main__':
 
-    all_files = os.listdir('./validation_proc/')
+    all_files = os.listdir('../validation_proc/')
 
     for filename in all_files:
         generate_df(filename)
@@ -53,5 +54,5 @@ if __name__ == '__main__':
     #14746591
     #5759
     #151954
-    final_df.to_csv('./final_df.csv', sep=';', index=False)
+    final_df.to_csv('./df_input.csv', sep=';', index=False)
 
