@@ -11,6 +11,20 @@ final_df = pd.DataFrame()
 
 # GET AVERAGES
 #avg_per_hour = {key: (tuple((hour, []) for hour in range(24))) for key in list(data['linha'].unique())}
+import datetime
+import calendar
+
+def week_of_month(tgtdate):
+    tgtdate = tgtdate.to_pydatetime()
+
+    days_this_month = calendar.mdays[tgtdate.month]
+    for i in range(1, days_this_month):
+        d = datetime.datetime(tgtdate.year, tgtdate.month, i)
+        if d.day - d.weekday() > 0:
+            startdate = d
+            break
+    # now we canuse the modulo 7 appraoch
+    return (tgtdate - startdate).days //7 + 1
 
 def generate_df(filename):
     print(filename)
@@ -36,6 +50,7 @@ def generate_df(filename):
     validation_georeffed_do_dia["d_mes"] = validation_georeffed_do_dia['data_hora'].dt.day
     validation_georeffed_do_dia["d_ano"] = validation_georeffed_do_dia['data_hora'].dt.dayofyear
     validation_georeffed_do_dia["mes"] = validation_georeffed_do_dia['data_hora'].dt.month
+    validation_georeffed_do_dia["semana_do_mes"] = validation_georeffed_do_dia['data_hora'].apply(week_of_month)
 
     print(len(validation_georeffed_do_dia))
     global final_df
