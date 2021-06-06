@@ -8,9 +8,6 @@ import numpy as np
 
 final_df = pd.DataFrame()
 
-
-# GET AVERAGES
-#avg_per_hour = {key: (tuple((hour, []) for hour in range(24))) for key in list(data['linha'].unique())}
 import datetime
 import calendar
 
