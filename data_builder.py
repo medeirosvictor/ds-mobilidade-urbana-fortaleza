@@ -61,10 +61,4 @@ if __name__ == '__main__':
     for filename in all_files:
         generate_df(filename)
 
-    beforeGroup_df = final_df
-    
-    #14746591
-    #5759
-    #151954
     final_df.to_csv('./df_input.csv', sep=';', index=False)
-
