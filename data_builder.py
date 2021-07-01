@@ -35,7 +35,8 @@ def generate_df(filename):
     validation_georeffed_do_dia['data_hora'] = pd.to_datetime(validation_georeffed_do_dia['data_hora'],
                                                               format='%Y-%m-%d %H:%M:%S', errors='coerce')
     validation_georeffed_do_dia['data_hora'] = validation_georeffed_do_dia['data_hora'].dt.floor('H')
-    validation_georeffed_do_dia['linha'] = validation_georeffed_do_dia['linha'].astype(str)
+    validation_georeffed_do_dia['linha'] = validation_georeffed_do_dia['linha']
+
     validation_georeffed_do_dia = pd.DataFrame(
         {'validations_per_hour': validation_georeffed_do_dia.groupby(['linha', 'data_hora']).size()}).reset_index()
 
