@@ -1,2 +1,6 @@
 df_input.zip
 df_input.csv
+.amlignore
+.amlignore.amltmp
+*.amltmp
+*.amltemp
