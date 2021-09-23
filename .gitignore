@@ -4,3 +4,5 @@ df_input.csv
 .amlignore.amltmp
 *.amltmp
 *.amltemp
+data_input_zerofill.csv
+data_input_nozerofill.csv

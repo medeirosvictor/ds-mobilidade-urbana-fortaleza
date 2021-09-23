@@ -62,4 +62,4 @@ if __name__ == '__main__':
     for filename in all_files:
         generate_df(filename)
 
-    final_df.to_csv('./df_input.csv', sep=';', index=False)
+    final_df.to_csv('./data_input_nozerofill.csv', sep=';', index=False)
