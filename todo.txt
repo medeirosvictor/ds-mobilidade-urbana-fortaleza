@@ -1,0 +1,35 @@
+QQ
+-> USAR LINHA COM MAIS EXEMPLOS? (melhor performance)
+
+
+---------------------------------------------------------------------------------------------------------
+TODO
+
+[*] SCATTER PLOT
+[*] INSERIR OS VALORES DE ZERO NAS LISTAS
+[*] 1 MES DE TREINO FIXO -> ATE ONDE DA PRA FICAR PREVENDO ANTES DE FICAR RUIM
+[*] MAX MESES DE TREINO E VAI REMOVENDO MESES DE TREINO PRA VERIFICAR
+[] ADICIONAR MAPE
+---------------------------------------------------------------
+
+-> Troca de dados (utilizar um ano NAO covid)
+-> strategias (
+    -- 1 modelo por linha, 
+    -- 1 modelo para todas as linhas e 
+    -- 1 modelo "cluster"/similares [alto, medio e baixo fluxo]
+)
+-> Fixar periodo de previsao e aumentando o dado de treino 
+(prever sempre as 2 ultimas semanas de novembro -> 2 primeiras de novembro...+2 finais de outubro...+) 
+-> aumentar horizonte de previsao (com dado de treino fixo)
+
+
+
+---------------------------------------------------------------------------------------------------------
+RESULTADOS INTERESSANTES
+
+TREINAR COM MARCO -> PREVER ABRIL FOI CRINGE
+TREINAR COM JUNHO PRA PREVER O MESMO FOI MELHOR ACTUALLY
+
+-> utilizando o modelo com menor MAE para tentar prever o resto
+
+
