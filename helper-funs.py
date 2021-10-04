@@ -1,5 +1,5 @@
 
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
 import numpy as np
 
 def get_performance(model, X_test, Y_test):
@@ -8,12 +8,12 @@ def get_performance(model, X_test, Y_test):
     rmse = (np.sqrt(mse))
     r2 = r2_score(Y_test, y_test_predict)
     mae = mean_absolute_error(Y_test, y_test_predict)
-    #mape = mean_absolute_percentage_error(Y_test, y_test_predict)
+    mape = mean_absolute_percentage_error(Y_test, y_test_predict)
     performance_scoring = [
         r2,
         rmse,
         mae,
-        #mape
+        mape
     ]
     #performance_scoring = pd.DataFrame(performance_scoring,columns=['Metrica', 'Score'])
     #performance_scoring['Score'] = performance_scoring['Score'].astype('float64')
