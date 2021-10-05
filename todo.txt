@@ -1,5 +1,37 @@
-QQ
--> USAR LINHA COM MAIS EXEMPLOS? (melhor performance)
+ESCRITA DO TCC
+
+[] REFAZER PARTE DE FUNDAMENTACAO TEORICA SOBRE OS MODELOS APLICADOS
+
+[] EXPLICAR IMAGENS DA FUNDAMENTACAO TEORICA Senti falta 
+de uma explicação das figuras (contexto dos exemplos e caracterização dos conceitos)
+
+[] MELHORAR NOTACAO MATEMATICA E FORMULAS
+
+[] POSSIVELMENTE REMOVER OU MELHORAR IMAGENS DE NEURONIO EM FUND. TEOR.
+
+[] REVISAR FORMULAS E TERMOS DAS METRICAS DE ERRO
+
+[] FALTOU O ANO NA REFERENCIA DE MILENKOVIC
+
+[] EXPLICAR GRAFICOS NA PARTE DE METODOLOGIA
+
+[] Poderia deixar a justificativa mais precisa, focando a previsão de embarque.
+
+[] A é um vetor de constantes (múltiplas features)
+
+[] DISPOSICAO DOS INDICES NA EXPLICACAO DE NEURONIO
+
+[] MELHORAR A REDACAO E CONCATENACAO DOS TRABALHOS RELACIONADOS
+
+
+
+
+[] REVISAR REFERENCIAS ABNT
+
+[] REVISAR QUEBRAS DE PAGINA
+
+[]
+
 
 
 ---------------------------------------------------------------------------------------------------------
