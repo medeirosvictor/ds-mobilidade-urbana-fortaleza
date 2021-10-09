@@ -6,3 +6,9 @@ df_input.csv
 *.amltemp
 data_input_zerofill.csv
 data_input_nozerofill.csv
+data_input_zerofill_2018.csv
+data_input_nozerofill_2018.csv
+data_input_zerofill_2020.csv
+data_input_nozerofill_2020.csv
+./2018/raw
+/raw-data-backup
