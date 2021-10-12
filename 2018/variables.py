@@ -10,11 +10,11 @@ day_of_week_translator = {
 
 feriados = [
             ['Ano Novo', 1, 1],
-            ['Carnaval', 24, 2],
-            ['Carnaval', 25, 2],
-            ['Carnaval', 26, 2],
+            ['Carnaval', 12, 2],
+            ['Carnaval', 13, 2],
             ['Dia de São José', 19, 3],
             ['Data Magna', 25, 3],
+            ['Paixao de Cristo', 30, 3],
             ['Sexta-Feira Santa', 10, 4],
             ['Aniversário de Fortaleza', 13, 4],
             ['Tiradentes', 21, 4],
@@ -30,7 +30,7 @@ feriados = [
 
 vesperas = [
             ['Ano Novo', 31, 12],
-            ['Carnaval', 23, 2],
+            ['Carnaval', 11, 2],
             ['Dia de São José', 18, 3],
             ['Data Magna', 24, 3],
             ['Sexta-Feira Santa', 9, 4],
