@@ -16,6 +16,10 @@ def fill_header(val_do_dia, filename):
     df = pd.read_csv('dfs_2015/' + filename)
     return df
 
+def encode(data, col, max_val):
+    data[col + '_sin'] = np.sin(2 * np.pi * data[col]/max_val)
+    data[col + '_cos'] = np.cos(2 * np.pi * data[col]/max_val)
+    return data
 
 def week_of_month(tgtdate):
     tgtdate = tgtdate.to_pydatetime()
@@ -31,7 +35,7 @@ def week_of_month(tgtdate):
 
 def generate_df(filename):
     print(filename)
-    val = pd.read_csv('../2015/' + filename, sep=';')
+    val = pd.read_csv('./raw-2015/' + filename, sep=';')
     val = val.drop('Unnamed: 9', axis=1)
     val.reset_index(drop=True, inplace=True)
     # print(val.info())
@@ -62,6 +66,8 @@ def generate_df(filename):
 
     validation_georeffed_do_dia['d_semana'] = validation_georeffed_do_dia.apply(lambda row: row.data_hora.dayofweek, axis=1)
 
+    validation_georeffed_do_dia = encode(validation_georeffed_do_dia, )
+
     validation_georeffed_do_dia['hour_sin'] = np.sin(2 * np.pi * validation_georeffed_do_dia['data_hora'].dt.hour/23.0)
     validation_georeffed_do_dia['hour_cos'] = np.cos(2 * np.pi * validation_georeffed_do_dia['data_hora'].dt.hour/23.0)
     validation_georeffed_do_dia["hora"] = validation_georeffed_do_dia['data_hora'].dt.strftime('%H')
@@ -71,13 +77,14 @@ def generate_df(filename):
     validation_georeffed_do_dia["semana_do_mes"] = validation_georeffed_do_dia['data_hora'].apply(week_of_month)
 
     print(len(validation_georeffed_do_dia))
+    print(validation_georeffed_do_dia)
     global final_df
     final_df = pd.concat([final_df, validation_georeffed_do_dia], ignore_index=True)
     print(len(final_df))
 
 if __name__ == '__main__':
 
-    all_files = os.listdir('../2015/')
+    all_files = os.listdir('./raw-2015/')
 
     for filename in all_files:
         generate_df(filename)
