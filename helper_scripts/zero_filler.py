@@ -8,7 +8,7 @@ data = pd.read_csv('../data_input_nozerofill_2015.csv', sep=',', delimiter=',')
 data_model = data.copy()
 
 #usando apenas as top 100 linhas (linhas com mais exemplos)
-top100_linhalist = data_model.linha.value_counts().index[:100]
+top100_linhalist = data_model.groupby(data_model.linha).sum().reset_index().sort_values('validations_per_hour', ascending=False).index[:10].to_list()
 
 def encode(data, col, max_val):
     data[col + '_sin'] = np.sin(2 * np.pi * data[col]/max_val)
@@ -92,4 +92,4 @@ data_model.loc[data_model.mes == 3]
 
 data_model = data_model.sort_values(['linha', 'data_hora'], ascending=[True, True])
 
-data_model.to_csv('../data_input_zerofill_2015_ciclycal.csv', index=False, sep=';')
+data_model.to_csv('../data_input_zerofill_2015_top10_ciclycal.csv', index=False, sep=';')
