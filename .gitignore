@@ -17,3 +17,5 @@ raw-data-backup/
 helper_scripts/raw-2015/*
 helper_scripts/dfs_2015/*
 top100_linhas_data_model*
+.vscode
+.vscode/*

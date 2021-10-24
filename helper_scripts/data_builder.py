@@ -13,7 +13,7 @@ final_df = pd.DataFrame()
 def fill_header(val_do_dia, filename):
     # 777;84;Siqueira/Messejana/P;2001;06/01/2015 09:21:03;2;02-ESTUDANTE ETUFOR;Ida;N;
     val_do_dia.to_csv('dfs_2015/' + filename, header=
-        ['id_onibus','linha','linha_nome','undf','data_hora','undf2','tipo_validacao','sentido','integracao'], 
+        ['undf','linha','linha_nome','id_onibus','data_hora','undf2','tipo_validacao','sentido','integracao'], 
         index=False)
     df = pd.read_csv('dfs_2015/' + filename)
     return df
