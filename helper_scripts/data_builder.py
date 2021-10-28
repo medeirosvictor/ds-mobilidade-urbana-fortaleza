@@ -45,7 +45,7 @@ def generate_df(filename):
     
     validation_georeffed_do_dia = fill_header(val, filename)
     
-    validation_georeffed_do_dia['id_onibus'] = validation_georeffed_do_dia['id_onibus'].astype(np.int32)
+    # validation_georeffed_do_dia['id_onibus'] = validation_georeffed_do_dia['id_onibus'].astype(np.int32)
     validation_georeffed_do_dia['linha'] = validation_georeffed_do_dia['linha'].astype(str)
     validation_georeffed_do_dia['linha_nome'] = validation_georeffed_do_dia['linha_nome'].astype(str)
     validation_georeffed_do_dia['undf'] = validation_georeffed_do_dia['undf'].astype(str)
@@ -60,7 +60,7 @@ def generate_df(filename):
 
 
     validation_georeffed_do_dia = pd.DataFrame(
-        {'validations_per_hour': validation_georeffed_do_dia.groupby(['linha', 'data_hora']).size()}).reset_index()
+        {'validacoes_por_hora': validation_georeffed_do_dia.groupby(['linha', 'data_hora']).size()}).reset_index()
 
     validation_georeffed_do_dia['d_semana'] = validation_georeffed_do_dia.apply(lambda row: row.data_hora.dayofweek, axis=1)
 
@@ -75,12 +75,12 @@ def generate_df(filename):
     validation_georeffed_do_dia["hora"] = validation_georeffed_do_dia['data_hora'].dt.strftime('%H').astype(int)
 
     if (encoding == True):
-        validation_georeffed_do_dia['d_mes'] = encode(validation_georeffed_do_dia, 'd_mes', 31)
-        validation_georeffed_do_dia['d_semana'] = encode(validation_georeffed_do_dia, 'd_semana', 6)
-        validation_georeffed_do_dia['d_ano'] = encode(validation_georeffed_do_dia, 'd_ano', 366)
-        validation_georeffed_do_dia['mes'] = encode(validation_georeffed_do_dia, 'mes', 12)
-        validation_georeffed_do_dia['semana_do_mes'] = encode(validation_georeffed_do_dia, 'semana_do_mes', 4)
-        validation_georeffed_do_dia['hora'] = encode(validation_georeffed_do_dia, 'hora', 23)
+        encode(validation_georeffed_do_dia, 'd_mes', 31)
+        encode(validation_georeffed_do_dia, 'd_semana', 6)
+        encode(validation_georeffed_do_dia, 'd_ano', 366)
+        encode(validation_georeffed_do_dia, 'mes', 12)
+        encode(validation_georeffed_do_dia, 'semana_do_mes', 4)
+        encode(validation_georeffed_do_dia, 'hora', 23)
 
     global final_df
     final_df = pd.concat([final_df, validation_georeffed_do_dia], ignore_index=True)
@@ -93,4 +93,4 @@ if __name__ == '__main__':
     for filename in all_files:
         generate_df(filename)
 
-    final_df.to_csv('../data_input_nozerofill_2015.csv', sep=',', index=False)
+    final_df.to_csv(f'../data_input_nozerofill_2015.csv', sep=',', index=False)

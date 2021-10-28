@@ -8,7 +8,7 @@ data = pd.read_csv('../data_input_nozerofill_2015.csv', sep=',', delimiter=',')
 data_model = data.copy()
 
 #usando apenas as top 100 linhas (linhas com mais exemplos)
-top100_linhalist = data_model.groupby(data_model.linha).sum().reset_index().sort_values('validations_per_hour', ascending=False).index[:10].to_list()
+top100_linhalist = data_model.groupby(data_model.linha).sum().reset_index().sort_values('validacoes_por_hora', ascending=False).index[:5].to_list()
 
 def encode(data, col, max_val):
     data[col + '_sin'] = np.sin(2 * np.pi * data[col]/max_val)
@@ -29,6 +29,7 @@ def week_of_month(dt):
 # linha_list = data_model.linha.unique()
 
 for linha in top100_linhalist:
+    print("Linha: ", linha)
     currentDataModel_Linha = data_model.loc[data_model.linha == linha]
     for mes in range(1, 13):
         print(mes)
@@ -58,16 +59,19 @@ for linha in top100_linhalist:
                     new_row = {
                             'linha': linha,
                             'data_hora': dd,
-                            'validations_per_hour': 0,
+                            'validacoes_por_hora': 0,
                             'd_semana': dd.weekday(),
-                            'hour_sin': np.sin(2 * np.pi * hora/23),
-                            'hour_cos': np.cos(2 * np.pi * hora/23),
-
+                            'd_mes': dia,
+                            'd_ano': dd.timetuple().tm_yday,
+                            'mes': mes,
+                            'semana_do_mes': week_of_month(dd),
+                            'hora': hora,
+                            
                             'd_mes_sin': np.sin(2 * np.pi * dia/31),
                             'd_mes_cos': np.cos(2 * np.pi * dia/31),
 
-                            'd_semana_sin': np.sin(2 * np.pi *  dd.weekday()/6),
-                            'd_semana_cos': np.cos(2 * np.pi *  dd.weekday()/6),
+                            'd_semana_sin': np.sin(2 * np.pi *  dd.weekday()/7),
+                            'd_semana_cos': np.cos(2 * np.pi *  dd.weekday()/7),
 
                             'd_ano_sin': np.sin(2 * np.pi * dd.timetuple().tm_yday/366),
                             'd_ano_cos': np.cos(2 * np.pi * dd.timetuple().tm_yday/366),
@@ -78,17 +82,11 @@ for linha in top100_linhalist:
                             'semana_do_mes_sin': np.sin(2 * np.pi * week_of_month(dd)/4),
                             'semana_do_mes_cos': np.cos(2 * np.pi * week_of_month(dd)/4),
 
-                            'hora': hora,
-                            'd_mes': dia,
-                            'd_ano': dd.timetuple().tm_yday,
-                            'mes': mes,
-                            'semana_do_mes': week_of_month(dd)
+                            'hora_sin': np.sin(2 * np.pi * hora/23),
+                            'hora_cos': np.cos(2 * np.pi * hora/23)
                         }
 
                     data_model = data_model.append(new_row, ignore_index=True)
-
-
-data_model.loc[data_model.mes == 3]
 
 data_model = data_model.sort_values(['linha', 'data_hora'], ascending=[True, True])
 
