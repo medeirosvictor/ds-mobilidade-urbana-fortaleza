@@ -36,7 +36,7 @@ def week_of_month(tgtdate):
     return (tgtdate - startdate).days //7 + 1
 
 def generate_df(filename):
-    encoding = True
+    encoding = False
 
     print(filename)
     val = pd.read_csv('./raw-2015/' + filename, sep=';')
